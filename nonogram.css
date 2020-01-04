@@ -1,0 +1,143 @@
+body{
+    margin: 0;
+    background-color:#5A18AE;
+}
+#container{
+    margin: 0;
+    padding: 0;
+    width:100%;
+    height:100vh;
+}
+h1,button{
+   display: inline-block;
+    
+}
+#headerName{
+    margin:0;
+    font-size:40px;
+    text-align: center;
+    color:#FFF56D;
+    text-shadow: 0px 0px 4px rgb(255, 187, 0);
+}
+
+#banner{
+    background-color: #2C065E;
+    width: 100%;
+    height: 80px;
+    box-shadow: 0px 10px  15px rgb(184, 107, 255);
+}
+#header{
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+#login{
+    position: absolute;
+    right:10px;
+    color:#FE7AFC;
+    border:3px;
+    border-color:#FE7AFC;
+    border-style: solid;
+    border-radius: 8px;
+    background-color: none;
+    font-size:15px;
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    display: block;
+}
+#login:hover{
+    box-shadow: 0px 0px  15px rgb(184, 107, 255); 
+}
+#menu{
+    
+    width:fit-content;
+    
+    margin: 100px auto;
+}
+.menuButton{
+    display: block;
+    font-size: 30px;
+    width: 100px;
+    margin: 20px 0;
+}
+#gameLevels{
+    display: none;
+    width:fit-content;
+    margin: 100px auto;
+}
+.levels{
+    display: block;
+    font-size: 30px;
+}
+#gameCtn{
+    display: none;
+    background-color: rgb(140, 52, 255);
+    margin:30px auto;
+    width: fit-content;
+    height:fit-content;  
+}
+.game{
+    background-color: aquamarine;
+    border:1px;
+    border-style: solid;
+    width: fit-content;
+    height:fit-content;  
+    border-color:#FE7AFC;
+    display: inline-block;
+  
+}
+.divTable{
+	display: table;
+}
+.divTableRow {
+	display: table-row;
+}
+
+.divTableBody {
+	display: table-row-group;
+}
+#previewWindow{
+    
+}
+#preview{
+    widows: 100px;
+    height: 100px;
+}
+#columnClues{
+
+}
+#rowClues{
+   
+}
+#gameTable{
+    
+}
+.clueCell{
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+table{
+    border-collapse: collapse;
+     
+}
+td{
+    padding:0px;
+    border:1px;
+    border-style:solid;
+    border-color: black;
+}
+div{
+    text-align: center;
+}
+#clock{
+    display: none;
+    color: rgb(255, 56, 179)
+}

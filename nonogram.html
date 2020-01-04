@@ -1,0 +1,100 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="nonogram.css">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nonogram</title>
+</head>
+<body>
+    
+    <div id='container'>
+        <div id="banner">
+            <div id='header'>
+                <h1 id='headerName'>Nonogram</h1>
+                <button id='login'>login</button>
+            </div>
+        </div>
+        
+        <div id='gameCtn'>
+                <div class="divTable">
+                        <div class="divTableBody">
+                            <div class="divTableRow">
+                                    <div class='game' id=previewWindow>
+                                        <div id="preview">
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    <div class='game' id="columnClues">
+                                        
+                                    </div>
+                            </div>
+                            <div class="divTableRow">
+                                    <div class='game' id="rowClues"></div>
+                                    <div class='game' id="gameTable">
+                                            
+                                    </div>
+                            </div>
+                        </div>
+                </div>
+                <div id='clock'>
+                        <p id='timer'>"00:00.000"</p>
+                </div>
+                <div id='changeColors'>
+                    <h3>Change border color:</h3>
+                    <br>
+                    <select id="borderColor" title="border color" onchange="borderColor()">
+                        <option>white</option>
+                        <option>black</option>
+                        <option>pink</option>
+                        <option>blue</option>
+                        <option>green</option>
+                        <option>purple</option>
+                    </select>
+
+                    <h3>Change grid color:</h3>
+                    <br>
+                    <select id="gridColor"  onchange="gridColor()">
+                        <option>white</option>
+                        <option>black</option>
+                        <option>pink</option>
+                        <option>blue</option>
+                        <option>green</option>
+                        <option>purple</option>
+                    </select>
+                    <h3>Change selected box color:</h3>
+                    <br>
+                    <select id="selectedColor" onchange="selectColor()">
+                        <option>white</option>
+                        <option>black</option>
+                        <option>pink</option>
+                        <option>blue</option>
+                        <option>green</option>
+                        <option>purple</option>
+                    </select>
+                                                
+                </div>
+        </div>
+        <div id='menu'>
+                <button class='menuButton' id='5X5'>5X5</button>
+                <button class='menuButton' id='10X5'>10X5</button>
+                <button class='menuButton' id='10X10'>10x10</button>
+                <button class='menuButton' id='15X15'>15x15</button>
+                <button class='menuButton' id='20X20'>20x20</button>
+        
+        </div>
+        <div id=gameLevels>
+            <button class='levels' id='level1'>level 1</button>
+            <button class='levels' id='level2'>level 2</button>
+            <button class='levels' id='level3'>level 3</button>
+            <button class='levels' id='level4'>level 4</button>
+            <button class='levels' id='level5'>level 5</button>
+        </div>       
+    </div>
+    
+    <script src="nonogram.js"></script>
+ 
+
+</body>
+</html>
