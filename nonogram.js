@@ -6,6 +6,11 @@ let clues;
 let size='47px';
 let backGroundColor='initial';
 let selectColorCell='black';
+let gameState={};
+let moveCounter=0;
+let totalBlocks=0;
+
+
 var httpRequest=new XMLHttpRequest();
 document.getElementById('5X5').onclick=function(){
     document.getElementById('gameLevels').style.display='block';
@@ -51,7 +56,7 @@ document.getElementById('level1').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-    console.log(level)
+   
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -60,7 +65,7 @@ document.getElementById('level2').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-    console.log(level)
+
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -69,7 +74,7 @@ document.getElementById('level3').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-    console.log(level)
+
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -78,7 +83,7 @@ document.getElementById('level4').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-    console.log(level);
+  
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -87,7 +92,7 @@ document.getElementById('level5').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-    console.log(level);
+
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -95,7 +100,7 @@ document.getElementById('level5').onclick=function(){
 function requestJson(){
     
     var requestURL='games'+"/"+type+"/"+level+".json";
-    console.log(requestURL);
+   
 
     httpRequest.onreadystatechange=getGameData;
 
@@ -104,13 +109,32 @@ function requestJson(){
     
     httpRequest.send();
 }
+document.getElementById('changeType').onclick=function(){
+    
+    document.getElementById('clueColumnTable').remove();
+    document.getElementById('clueRowTable').remove();
+    document.getElementById('createdGame').remove();
+    document.getElementById('gameCtn').style.display='none';
+    document.getElementById('menu').style.display='block';
+    gameState.clear();
 
+
+
+}
+document.getElementById('changeLevel').onclick=function(){
+    document.getElementById('clueColumnTable').remove();
+    document.getElementById('clueRowTable').remove();
+    document.getElementById('createdGame').remove();
+    document.getElementById('gameCtn').style.display='none';
+    document.getElementById('gameLevels').style.display='block';
+    gameState.clear();
+}
 function getGameData(){
   try{
         if(httpRequest.readyState===XMLHttpRequest.DONE){
             if(httpRequest.status===200){
             clues=httpRequest.responseText; 
-            //myData=JSON.parse(myData);
+           
             createClueTables(clues);
             }
         }
@@ -122,7 +146,7 @@ function getGameData(){
 
 function getMaxClueLength(cluesData){
     let len=0;
-    console.log(cluesData.length);
+  
     for(let i=0;i<cluesData.length;i++)
     {   
         if(len<cluesData[i].length){
@@ -146,11 +170,14 @@ function createClueTables(gameClues){
     let clueColumnTbody=document.createElement('Tbody');
     let clueRowTable=document.createElement('table')
     let clueRowTbody=document.createElement('Tbody');
+        clueColumnTable.id='clueColumnTable';
+        clueRowTable.id='clueRowTable';
 
     for(let i=0;i<columnMaxClues;i++){
 
         let clueRow=document.createElement('tr');
         for(let j=0;j<columns;j++){
+    
             let clueColumnCell=document.createElement('td');
             let clueColumnDiv=document.createElement('div');
             clueColumnCell.className='tableCell';
@@ -204,7 +231,7 @@ function createClueTables(gameClues){
        
         let cluesList=rowsClues[i];
         let k=rowMaxClues-1;
-        console.log(cluesList);
+        
         for(let j=cluesList.length-1;j>-1;j--){
             let clueCtn=document.getElementById('r:'+i+k);
             k--;
@@ -212,9 +239,12 @@ function createClueTables(gameClues){
                 clueCtn.style.fontSize='10px';
             }
             clueCtn.innerHTML=cluesList[j];  
+            totalBlocks+=cluesList[j];
         }
     }
-    console.log(clueRowCtn.getBoundingClientRect().width);
+
+ 
+  
     document.getElementById('previewWindow').style.width=clueRowCtn.getBoundingClientRect().width-2;
     document.getElementById('previewWindow').style.height=clueColumnCtn.getBoundingClientRect().height-2;
     
@@ -228,8 +258,10 @@ function createNonogramTable(type){
     for(let i=0;i<rows;i++){
         let tableRow=document.createElement('tr');
         for(let j=0;j<columns;j++){
+             gameState[' '+i+j]=false;
             let tableCell=document.createElement('td');
             let tableCellDiv=document.createElement('div');
+            tableCellDiv.id=' '+i+j;
             tableCell.className='tableCell';
             tableCellDiv.className='gameCell';
             tableCellDiv.style.backgroundColor=backGroundColor;
@@ -271,10 +303,21 @@ function createNonogramTable(type){
                 if(this.style.backgroundColor==selectColorCell){
         
                     this.style.backgroundColor=backGroundColor;
+                    gameState[this.id]=false;
+                    moveCounter++
+                    document.getElementById('moveCounter').innerHTML= moveCounter;
                 }
                 else{
                 
                     this.style.backgroundColor=selectColorCell;
+                    gameState[this.id]=true;
+                    moveCounter++
+                    document.getElementById('moveCounter').innerHTML= moveCounter;
+                    
+                }
+                if(moveCounter>=totalBlocks){
+                    winState();
+                   
                 }
                
                 
@@ -286,9 +329,10 @@ function createNonogramTable(type){
     }
 
     table.appendChild(tableBody);
+    table.id='createdGame';
     gameCtn.appendChild(table);
     
-
+    
     startTimer();
 } 
 var time;
@@ -367,4 +411,111 @@ function selectColor(){
         }
     }
     selectColorCell=newColor;
+}
+function winState(){
+    let clueCounter=0;
+    
+    let gameClues=JSON.parse(clues);
+    let rowsClues=gameClues[0].row;
+    let columnsClues=gameClues[1].column;
+    let currentClueIndex=0;
+   
+
+    for(let j=0;j<columns;j++){
+            currentClueIndex=0;
+            let currentClues=columnsClues[j];
+            if(currentClues.length==0){
+                continue;
+            }
+            clueCounter=0;
+        for(i=0;i<rows;i++){
+            
+            if(currentClueIndex==currentClues.length){
+                if(gameState[' '+i+j]==true){
+                   
+                    return false;
+                }
+              
+                continue;
+            }
+            if(gameState[' '+i+j]==true){
+                    
+                clueCounter++               
+            }
+
+            if((gameState[' '+i+j]==false&&clueCounter>0)||i==rows-1){
+               
+                if(currentClues[currentClueIndex]!=clueCounter){
+                   
+                    return false;
+                }
+                
+                currentClueIndex++
+                clueCounter=0;
+            }   
+
+        
+        }
+        if(currentClueIndex!=currentClues.length){
+
+         
+            return false;
+    }
+
+    }
+
+    for(let i=0;i<rows;i++){
+        currentClueIndex=0;
+        let currentClues=rowsClues[i];
+        if(currentClues.length==0){
+            continue;
+        }
+        clueCounter=0;
+        for(j=0;j<columns;j++){
+           
+            if(currentClueIndex==currentClues.length){
+                if(gameState[' '+i+j]==true){
+                   
+                    return false;
+                }
+               
+                continue;
+            }
+            if(gameState[' '+i+j]==true){
+                  
+                clueCounter++               
+            }
+
+            if((gameState[' '+i+j]==false&&clueCounter>0)||j==columns-1){
+               
+                if(currentClues[currentClueIndex]!=clueCounter){
+                    
+                    return false;
+                }
+                
+                currentClueIndex++
+                clueCounter=0;
+            }   
+
+       
+        }
+        if(currentClueIndex!=currentClues.length){
+
+           
+            
+            return false;
+        }
+
+    }
+ 
+ displayWinMessage()
+}
+function displayWinMessage(){
+    let displayMessage=document.createElement('div');
+    displayMessage.id='displayMessage';
+    let image=document.createElement('img');
+    image.setAttribute('src','win.gif');
+    displayMessage.appendChild(image);
+    document.getElementById('container').appendChild(displayMessage);
+
 }
