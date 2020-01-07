@@ -9,8 +9,9 @@ let selectColorCell='black';
 let gameState={};
 let moveCounter=0;
 let totalBlocks=0;
-
-
+let activeBlocks=0;
+let timer;
+let watch;
 var httpRequest=new XMLHttpRequest();
 document.getElementById('5X5').onclick=function(){
     document.getElementById('gameLevels').style.display='block';
@@ -55,8 +56,7 @@ document.getElementById('20X20').onclick=function(){
 document.getElementById('level1').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
-    level=this.id;
-   
+    level=this.id; 
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -65,7 +65,6 @@ document.getElementById('level2').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -74,7 +73,6 @@ document.getElementById('level3').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -83,7 +81,6 @@ document.getElementById('level4').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-  
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -92,7 +89,6 @@ document.getElementById('level5').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     level=this.id;
-
     requestJson();
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
@@ -100,13 +96,8 @@ document.getElementById('level5').onclick=function(){
 function requestJson(){
     
     var requestURL='games'+"/"+type+"/"+level+".json";
-   
-
     httpRequest.onreadystatechange=getGameData;
-
-    httpRequest.open('GET',requestURL);
-    
-    
+    httpRequest.open('GET',requestURL); 
     httpRequest.send();
 }
 document.getElementById('changeType').onclick=function(){
@@ -116,10 +107,11 @@ document.getElementById('changeType').onclick=function(){
     document.getElementById('createdGame').remove();
     document.getElementById('gameCtn').style.display='none';
     document.getElementById('menu').style.display='block';
-    gameState.clear();
-
-
-
+    gameState={};
+    moveCounter=0;
+    totalBlocks=0;
+    activeBlocks=0;
+    watch.end();
 }
 document.getElementById('changeLevel').onclick=function(){
     document.getElementById('clueColumnTable').remove();
@@ -127,26 +119,26 @@ document.getElementById('changeLevel').onclick=function(){
     document.getElementById('createdGame').remove();
     document.getElementById('gameCtn').style.display='none';
     document.getElementById('gameLevels').style.display='block';
-    gameState.clear();
+    gameState={};
+    moveCounter=0;
+    totalBlocks=0;
+    activeBlocks=0;
+    watch.end();
 }
 function getGameData(){
-  try{
+    try{
         if(httpRequest.readyState===XMLHttpRequest.DONE){
             if(httpRequest.status===200){
             clues=httpRequest.responseText; 
-           
             createClueTables(clues);
             }
         }
     }
     catch(e){
-   
     }
 }
-
 function getMaxClueLength(cluesData){
     let len=0;
-  
     for(let i=0;i<cluesData.length;i++)
     {   
         if(len<cluesData[i].length){
@@ -183,7 +175,6 @@ function createClueTables(gameClues){
             clueColumnCell.className='tableCell';
             clueColumnDiv.id='c:'+i+j;
             clueColumnDiv.className='clueCell';
-           
             clueColumnCell.style.width=size;
             clueColumnCell.style.height=size;
             clueColumnCell.appendChild(clueColumnDiv);
@@ -217,7 +208,6 @@ function createClueTables(gameClues){
             clueRowDiv.className='clueCell';
             clueRowCell.style.width=size;
             clueRowCell.style.height=size;
-           
             clueRowCell.appendChild(clueRowDiv);
             clueRowDiv.style.width='100%';
             clueRowDiv.style.height='100%';
@@ -228,7 +218,6 @@ function createClueTables(gameClues){
     clueRowTable.appendChild(clueRowTbody);
     clueRowCtn.appendChild(clueRowTable);
     for(let i=0;i<rows;i++){
-       
         let cluesList=rowsClues[i];
         let k=rowMaxClues-1;
         
@@ -242,23 +231,19 @@ function createClueTables(gameClues){
             totalBlocks+=cluesList[j];
         }
     }
-
- 
-  
     document.getElementById('previewWindow').style.width=clueRowCtn.getBoundingClientRect().width-2;
     document.getElementById('previewWindow').style.height=clueColumnCtn.getBoundingClientRect().height-2;
     
 }
 
 function createNonogramTable(type){
-   
     let gameCtn=document.getElementById('gameTable');
     let table=document.createElement('table');
     let tableBody=document.createElement('tbody');
     for(let i=0;i<rows;i++){
         let tableRow=document.createElement('tr');
         for(let j=0;j<columns;j++){
-             gameState[' '+i+j]=false;
+            gameState[' '+i+j]=false;
             let tableCell=document.createElement('td');
             let tableCellDiv=document.createElement('div');
             tableCellDiv.id=' '+i+j;
@@ -297,7 +282,6 @@ function createNonogramTable(type){
             }
             tableCellDiv.style.width='100%';
             tableCellDiv.style.height='100%';
-           
             tableCellDiv.style.textAlign='center';
             tableCellDiv.onclick=function(){
                 if(this.style.backgroundColor==selectColorCell){
@@ -305,6 +289,8 @@ function createNonogramTable(type){
                     this.style.backgroundColor=backGroundColor;
                     gameState[this.id]=false;
                     moveCounter++
+                    activeBlocks--;
+                    document.getElementById('active').innerHTML= activeBlocks;
                     document.getElementById('moveCounter').innerHTML= moveCounter;
                 }
                 else{
@@ -312,15 +298,14 @@ function createNonogramTable(type){
                     this.style.backgroundColor=selectColorCell;
                     gameState[this.id]=true;
                     moveCounter++
+                    activeBlocks++;
+                    document.getElementById('active').innerHTML= activeBlocks;
                     document.getElementById('moveCounter').innerHTML= moveCounter;
                     
                 }
                 if(moveCounter>=totalBlocks){
-                    winState();
-                   
-                }
-               
-                
+                    winState(); 
+                }   
             }
             tableRow.appendChild(tableCell);
             
@@ -335,8 +320,7 @@ function createNonogramTable(type){
     
     startTimer();
 } 
-var time;
-var watch;
+
 
 function startTimer(){
 	timer=document.getElementById('timer');
@@ -355,34 +339,37 @@ function clock(watch){
 	watch.textContent=setTimer(time);
 	}
 
-function passingTime(){
-	var currentTime=Date.now();
-	var timePassed=currentTime-offset;;
-	offset=currentTime;
-	return timePassed;
-}
-function setTimer(time){
-        time= new Date(time)
-        var min=time.getMinutes().toString();
-        var sec=time.getSeconds().toString();
-        var milli=time.getMilliseconds().toString();
+    function passingTime(){
+        var currentTime=Date.now();
+        var timePassed=currentTime-offset;;
+        offset=currentTime;
+        return timePassed;
+    }
+    function setTimer(time){
+            time= new Date(time)
+            var min=time.getMinutes().toString();
+            var sec=time.getSeconds().toString();
+            var milli=time.getMilliseconds().toString();
 
-    if(min.length<2){
-        min='0'+min;
+        if(min.length<2){
+            min='0'+min;
+        }
+        if(sec.length<2){
+            sec='0'+sec;
+        }
+        while(milli.length<3){
+            milli='0'+milli;
+        }
+        return min+':'+sec+'.'+milli;
     }
-    if(sec.length<2){
-        sec='0'+sec;
-    }
-    while(milli.length<3){
-        milli='0'+milli;
-    }
-    return min+':'+sec+'.'+milli;
-}
-this.start = function() {
-    int = setInterval(updating.bind(this), 10);
-    offset = Date.now();
+    this.start = function() {
+        int = setInterval(updating.bind(this), 10);
+        offset = Date.now();
 
-    };
+        };
+    this.end=function(){
+        clearInterval(int);
+    }  
 }
 function borderColor(){
     var tableCells=document.getElementsByClassName('tableCell');
@@ -404,7 +391,6 @@ function gridColor(){
 function selectColor(){
     var gameCells=document.getElementsByClassName('gameCell');
     var newColor=document.getElementById('selectedColor').value;
-   
     for(let i=0;i<gameCells.length;i++){
         if(gameCells[i].style.backgroundColor==selectColorCell){
         gameCells[i].style.backgroundColor=newColor;
@@ -419,7 +405,6 @@ function winState(){
     let rowsClues=gameClues[0].row;
     let columnsClues=gameClues[1].column;
     let currentClueIndex=0;
-   
 
     for(let j=0;j<columns;j++){
             currentClueIndex=0;
@@ -432,10 +417,8 @@ function winState(){
             
             if(currentClueIndex==currentClues.length){
                 if(gameState[' '+i+j]==true){
-                   
                     return false;
                 }
-              
                 continue;
             }
             if(gameState[' '+i+j]==true){
@@ -444,9 +427,7 @@ function winState(){
             }
 
             if((gameState[' '+i+j]==false&&clueCounter>0)||i==rows-1){
-               
                 if(currentClues[currentClueIndex]!=clueCounter){
-                   
                     return false;
                 }
                 
@@ -458,12 +439,9 @@ function winState(){
         }
         if(currentClueIndex!=currentClues.length){
 
-         
             return false;
+        }
     }
-
-    }
-
     for(let i=0;i<rows;i++){
         currentClueIndex=0;
         let currentClues=rowsClues[i];
@@ -472,22 +450,17 @@ function winState(){
         }
         clueCounter=0;
         for(j=0;j<columns;j++){
-           
             if(currentClueIndex==currentClues.length){
                 if(gameState[' '+i+j]==true){
-                   
                     return false;
                 }
-               
                 continue;
             }
             if(gameState[' '+i+j]==true){
-                  
                 clueCounter++               
             }
 
             if((gameState[' '+i+j]==false&&clueCounter>0)||j==columns-1){
-               
                 if(currentClues[currentClueIndex]!=clueCounter){
                     
                     return false;
@@ -496,26 +469,35 @@ function winState(){
                 currentClueIndex++
                 clueCounter=0;
             }   
-
-       
         }
         if(currentClueIndex!=currentClues.length){
-
-           
-            
             return false;
         }
 
     }
+    displayWinMessage()
+    watch.end();
  
- displayWinMessage()
 }
 function displayWinMessage(){
     let displayMessage=document.createElement('div');
+    let dltBtn=document.createElement('button');
+    displayMessage.appendChild(dltBtn);
+    dltBtn.style.display='block';
+    
+    dltBtn.innerHTML='X';
+    dltBtn.onclick=function(){
+        this.parentElement.remove();
+    }
     displayMessage.id='displayMessage';
     let image=document.createElement('img');
     image.setAttribute('src','win.gif');
     displayMessage.appendChild(image);
     document.getElementById('container').appendChild(displayMessage);
 
+}
+function checkObj(){
+    for (var prop in gameState) {
+       console.log(prop);
+    }
 }
