@@ -20,7 +20,7 @@
             <div id='changeGameCtls'>
                 <button class="gameGameButton" id="changeType">Change Game Type</button>
                 <button class="gameGameButton" id="changeLevel">Change Level</button>
-                <button onclick="checkObj()">check obj</button>
+                <button class="gameGameButton" id="changeGameMode">Game Mode</button>
                 
             </div>
                 <div class="divTable">
@@ -56,6 +56,9 @@
                 </div>
                 <div id=errorCounterCtn>
                     errors <p id='errorCounter'>0</p>
+                </div>
+                <div id=wonGameCounter style='display: none;'>
+                    games Completed # <p id='gamesCompletedCounter'>0</p>
                 </div>
                 <div id='changeColors'>
                     <h3>Change border color:</h3>
@@ -127,11 +130,11 @@
 
         </div>  
         <div id='attackLevels' style='display: none;'>
-            <button class='menuButton' id='time1' onclick="threeMin()">3:00</button>
-            <button class='menuButton' id='time2' onclick="fiveMin()">5:00</button>
-            <button class='menuButton' id='time3' onclick="tenMin()">10:00</button>
-            <button class='menuButton' id='time4' onclick="fifteenMin()">15:00</button>
-            <button class='menuButton' id='time5' onclick="twentyMin()">20:00</button>
+            <button class='menuButton' id='time1'>3:00</button>
+            <button class='menuButton' id='time2'>5:00</button>
+            <button class='menuButton' id='time3'>10:00</button>
+            <button class='menuButton' id='time4'>15:00</button>
+            <button class='menuButton' id='time5'>20:00</button>
 
         </div>  
         <div id='gameTypeMenu'>

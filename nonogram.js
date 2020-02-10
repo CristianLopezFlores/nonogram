@@ -19,10 +19,12 @@ let maxColSize;
 let img;
 let bWimg;
 let errorCounter=0;
-let gamesCompeleted;
+let gameCompleted=0;
+let attackGameStarted=false;
 //let arcade=false;
 let attack=false;
 ///let canvas;
+let countDown=0;
 var httpRequest=new XMLHttpRequest();
 document.getElementById('arcade').onclick=function(){
     document.getElementById('gameTypeMenu').style.display='none'
@@ -31,6 +33,8 @@ document.getElementById('arcade').onclick=function(){
 document.getElementById('attack').onclick=function(){
     document.getElementById('gameTypeMenu').style.display='none'
     document.getElementById('attackMenu').style.display='block';
+    document.getElementById('wonGameCounter').style.display='block';
+
     attack=true;
 
 }
@@ -160,29 +164,38 @@ document.getElementById('level5').onclick=function(){
     createNonogramTable(type);
     document.getElementById('clock').style.display='block';
 }
-function threeMin(){
+document.getElementById('time1').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('attackLevels').style.display='none';
+    countDown=3;
     randomButton();
 }
-function fiveMin(){
+document.getElementById('time2').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('attackLevels').style.display='none';
+    countDown=5;
+    document.getElementById('timer').innerHTML=countDown;
     randomButton();
 }
-function tenMin(){
+document.getElementById('time3').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('attackLevels').style.display='none';
+    countDown=10;
+    document.getElementById('timer').innerHTML=countDown;
     randomButton();
 }
-function fifteenMin(){
+document.getElementById('time4').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('attackLevels').style.display='none';
+    document.getElementById('timer').innerHTML=countDown;
+    countDown=15;
     randomButton();
 }
-function twentyMin(){
+document.getElementById('time5').onclick=function(){
     document.getElementById('gameCtn').style.display='block';
     document.getElementById('attackLevels').style.display='none';
+    document.getElementById('timer').innerHTML=countDown;
+    countDown=20;
     randomButton();
 }
 function requestJson(){
@@ -193,44 +206,46 @@ function requestJson(){
     httpRequest.send();
 }
 document.getElementById('changeType').onclick=function(){
-    
-    document.getElementById('clueColumnTable').remove();
-    document.getElementById('clueRowTable').remove();
-    document.getElementById('createdGame').remove();
+    clearCurrentGame();
+    watch.end();
     document.getElementById('gameCtn').style.display='none';
-    document.getElementById('moveCounter').innerHTML=0;
-    document.getElementById('errorCounter').innerHTML=0;
-    document.getElementById('active').innerHTML=0;
-    
+    attackGameStarted=false;
     if(attack==true){
         document.getElementById('attackMenu').style.display='block';
+        gameCompleted=0;
     }
     else{
         document.getElementById('menu').style.display='block';
     }
-    errorCounter=0;
-    gameState={};
-    moveCounter=0;
-    totalBlocks=0;
-    activeBlocks=0;
-    userInputs=false;
-    matrix=[];
-    watch.end();
 }
 document.getElementById('changeLevel').onclick=function(){
-    document.getElementById('clueColumnTable').remove();
-    document.getElementById('clueRowTable').remove();
-    document.getElementById('createdGame').remove();
+    clearCurrentGame();
+    watch.end();
     document.getElementById('gameCtn').style.display='none';
-    document.getElementById('moveCounter').innerHTML=0;
-    document.getElementById('errorCounter').innerHTML=0;
-    document.getElementById('active').innerHTML=0;
+    attackGameStarted=false;
     if(attack==true){
         document.getElementById('attackLevels').style.display='block';
+        gameCompleted=0;
     }
     else{
         document.getElementById('gameLevels').style.display='block';
     }
+    
+}
+document.getElementById("changeGameMode").onclick=function(){
+    clearCurrentGame();
+    watch.end();
+    document.getElementById('gameCtn').style.display='none';
+    attackGameStarted=false;
+    document.getElementById('gameTypeMenu').style.display='block';
+}
+function clearCurrentGame(){
+    document.getElementById('clueColumnTable').remove();
+    document.getElementById('clueRowTable').remove();
+    document.getElementById('createdGame').remove();
+    document.getElementById('moveCounter').innerHTML=0;
+    document.getElementById('errorCounter').innerHTML=0;
+    document.getElementById('active').innerHTML=0;
     errorCounter=0;
     gameState={};
     moveCounter=0;
@@ -238,7 +253,8 @@ document.getElementById('changeLevel').onclick=function(){
     activeBlocks=0;
     userInputs=false;
     matrix=[];
-    watch.end();
+
+    
 }
 //var img = new Image()
 //var bWimg = new Image();
@@ -263,22 +279,16 @@ function loadFile(e){
         //document.getElementById('output').src=img.src;
     }
     reader.readAsDataURL(e.target.files[0]);    
-   
 }
 document.getElementById('playGame').onclick=function(){
-   
     //var canvas = document.getElementById('canvas');
-  
     //img=document.getElementById('output');
     var ctx = canvas.getContext('2d');
 
-    ctx.drawImage(img,0,0);
- 
-    
+    ctx.drawImage(img,0,0); 
     var imageData = ctx.getImageData(0, 0,  canvas.width, canvas.height);
     
     var data = imageData.data;
-  
     for (var i = 0; i < data.length; i += 4) {
         var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
         let Y = 0.2126*avg  + 0.7152*avg + 0.0722*avg;
@@ -286,18 +296,16 @@ document.getElementById('playGame').onclick=function(){
         data[i]     = c;
         data[i + 1] =c;
         data[i + 2] = c;
-      }
+        }
   
- 
-      ctx.putImageData(imageData, 0, 0);
-      img.src='';
-      bWimg.src = canvas.toDataURL("image/jpg");
+        ctx.putImageData(imageData, 0, 0);
+        img.src='';
+        bWimg.src = canvas.toDataURL("image/jpg");
       //document.getElementById('display').src=bWimg.src;
-      setTimeout(function(){
+        setTimeout(function(){
         createImageBlocks();
     }, 1000);
      // createImageBlocks();
-     
 }
 function createImageBlocks(){
     //var canvas = document.getElementById('canvas');
@@ -311,11 +319,10 @@ function createImageBlocks(){
     ctx1.canvas.width=spaceX;
     ctx1.canvas.height=spaceY;
     for(let i=0;i<canvas.height;i+=spaceY){
-      let matrixRow=[];
+        let matrixRow=[];
       //divCtn.appendChild(document.createElement("BR"));
       //divCtn.appendChild(document.createElement("BR"));
-      for(let j=0;j<canvas.width;j+=spaceX){
-      
+        for(let j=0;j<canvas.width;j+=spaceX){
         
 
         ctx1.drawImage(bWimg,j,i,spaceX,spaceY,0, 0, spaceX, spaceY);
@@ -324,84 +331,82 @@ function createImageBlocks(){
         let black=0;
         let white=0;
         for (var k = 0; k < newData.length; k += 4) {
-          if(newData[k]==255){
-            white++;
-          }
-          else{
-            black++;
-          }
-        }
-        if(white>black){
-          matrixRow.push(false);
-        }
-        else{
-          matrixRow.push(true);
-        }
+            if(newData[k]==255){
+                white++;
+            }
+            else{
+                black++;
+            }
+            }
+            if(white>black){
+            matrixRow.push(false);
+            }
+            else{
+            matrixRow.push(true);
+            }
     
         
        // matrixIndexJ++;
-       ctx1.clearRect(0,0, spaceX, spaceY);
-      }
-      //matrixIndexI++;
-      matrix.push(matrixRow);
-     
+        ctx1.clearRect(0,0, spaceX, spaceY);
+        }
+        //matrixIndexI++;
+        matrix.push(matrixRow);
+        
     }
     canvas1.remove();
     canvas.remove();
     bWimg.src='';
     
     createClues();
-  }
-  function createClues(){
+    }
+function createClues(){
     let columnClues=[];
     let rowClues=[];
-   
-   for(let i=0;i<15;i++){
-     let counter=0
-     let clues=[]
-     for(let j=0;j<15;j++){
-       if(matrix[i][j]==true){
-         counter++;
-       }
-       if((matrix[i][j]==false&&counter>0)||(counter>0&&j==14)){
-         
-         clues.push(counter);
-         counter=0;
-       }
-     
-     }
-     rowClues.push(clues);
-   }
-  
-   for(let i=0;i<15;i++){
-     let counter=0
-     let clues=[]
-     for(let j=0;j<15;j++){
-       if(matrix[j][i]==true){
-         counter++;
-       }
-       if((matrix[j][i]==false&&counter>0)||(counter>0&&j==14)){
-         clues.push(counter);
-         counter=0;
-       
-       }
-       
-     }
-     columnClues.push(clues);
-   }
-   let clueTable=[];
-   clueTable.push(rowClues);
-   clueTable.push(columnClues);
-   
-   userInputs=true;
-   document.getElementById('gameCtn').style.display='block';
-   document.getElementById('uploadImageCtn').style.display='none';
-   document.getElementById('clock').style.display='block';
-   document.getElementById('gameLevels').style.display='none';
-   createNonogramTable(type);
-   clues=JSON.stringify(clueTable);
-   createClueTables(JSON.stringify(clueTable));
-  } 
+    for(let i=0;i<15;i++){
+        let counter=0
+        let clues=[]
+        for(let j=0;j<15;j++){
+        if(matrix[i][j]==true){
+            counter++;
+        }
+        if((matrix[i][j]==false&&counter>0)||(counter>0&&j==14)){
+            
+            clues.push(counter);
+            counter=0;
+        }
+        
+        }
+        rowClues.push(clues);
+    }
+    for(let i=0;i<15;i++){
+        let counter=0
+        let clues=[]
+        for(let j=0;j<15;j++){
+        if(matrix[j][i]==true){
+            counter++;
+        }
+        if((matrix[j][i]==false&&counter>0)||(counter>0&&j==14)){
+            clues.push(counter);
+            counter=0;
+        
+        }
+        
+        }
+        columnClues.push(clues);
+    }
+    let clueTable=[];
+    clueTable.push(rowClues);
+    clueTable.push(columnClues);
+    
+    userInputs=true;
+    document.getElementById('gameCtn').style.display='block';
+    document.getElementById('uploadImageCtn').style.display='none';
+    document.getElementById('clock').style.display='block';
+    document.getElementById('gameLevels').style.display='none';
+    createNonogramTable(type);
+    clues=JSON.stringify(clueTable);
+    createClueTables(JSON.stringify(clueTable));
+    } 
 function randomButton(){
     let randomMatrix=[];
     
@@ -428,7 +433,6 @@ function randomButton(){
         
         
     }
-  
     placeRandomCluesInMatrix(randomMatrix);
 }
 function clueSum(randomClues,index){ 
@@ -446,20 +450,13 @@ function backwardClueSum(randomClues,index){
     return sum;
 }
 function placeRandomCluesInMatrix(randMatrix){
-   
-  
     let randomMatrixTable=[];
-   
     for(let i=0; i<rows;i++){
         let randomRow=randMatrix[i];
         let randomRowTable=new Array(columns);
-       
         randomRowTable.fill(false);
-     
         let availableIndex=0;
         let clueCounter=0;
-    
-       
         for(let j=0;j<randomRow.length;j++){
             
             let sum=clueSum(randomRow,j+1);
@@ -470,18 +467,15 @@ function placeRandomCluesInMatrix(randMatrix){
             selectIndex= Math.floor(Math.random() * (maxRangeIndex-availableIndex)) + (availableIndex);
             
             for(let k=0;k<randomRow[j];k++){
-               
                 randomRowTable[selectIndex]=true;
                 availableIndex=selectIndex+2;
                 selectIndex++;
             }
         }
-       
         randomMatrixTable.push(randomRowTable);
         
     }
     let columnClueMatrix=[];
-   
     for(let i=0;i<columns;i++){
         let counter=0
         let clues=[]
@@ -499,20 +493,16 @@ function placeRandomCluesInMatrix(randMatrix){
         }
         columnClueMatrix.push(clues);
     }
-   
     matrix.push(randMatrix);
     matrix.push(columnClueMatrix);
     userInputs=true;
     document.getElementById('gameCtn').style.display='block';
-   
     document.getElementById('clock').style.display='block';
     document.getElementById('gameLevels').style.display='none';
     createNonogramTable(type);
     clues=JSON.stringify(matrix);
     createClueTables(JSON.stringify(matrix));
 }
-
- 
 function getGameData(){
     try{
         if(httpRequest.readyState===XMLHttpRequest.DONE){
@@ -719,8 +709,12 @@ function createNonogramTable(type){
     table.id='createdGame';
     gameCtn.appendChild(table);
     
-    
-    startTimer();
+    if(attackGameStarted==false){
+        attackGameStarted=true;
+        startTimer();
+    }
+
+    //startTimer();
 } 
 
 
@@ -731,14 +725,26 @@ function startTimer(){
 	watch.start();
 }
 function clock(watch){
+    let time=0;
+    if(attack==true){
+        time=new Date();
+        time.setMinutes(countDown);
+        time.setSeconds(0);
+        time.setMilliseconds(0);
+    }
+
 	
-	let time=0;
 	let offset;
 	let int;
 
 	function updating(){
-	time+=passingTime();
-	watch.textContent=setTimer(time);
+        if(attack==true){
+            time-=passingTime();
+        }
+        else{
+            time+=passingTime();
+        }
+        watch.textContent=setTimer(time);
 	}
 
     function passingTime(){
@@ -815,7 +821,6 @@ function winState(){
     else{
         
         rowsClues=gameClues[0];
-       
         columnsClues=gameClues[1];
 
     }
@@ -834,26 +839,19 @@ function winState(){
             
             if(currentClueIndex==currentClues.length){
                 if(gameState[' '+i+","+j]==true){
-                 
                     win=false;
-                   
                 }
                 continue;
             }
             if(gameState[' '+i+","+j]==true){
-              
                 clueCounter++               
             }
 
             if((gameState[' '+i+","+j]==false&&clueCounter>0)||i==rows-1){
                 if(currentClues[currentClueIndex]!=clueCounter){
-                  
                     if(currentClues[currentClueIndex]<clueCounter){
-                     
-                        
                     }
                     win=false;
-                   
                 }
                 
                 currentClueIndex++
@@ -863,7 +861,6 @@ function winState(){
         
         }
         if(currentClueIndex!=currentClues.length){
-           
             win=false;
         }
     }
@@ -883,18 +880,13 @@ function winState(){
                 continue;
             }
             if(gameState[' '+i+","+j]==true){
-               
                 clueCounter++               
             }
 
             if((gameState[' '+i+","+j]==false&&clueCounter>0)||j==columns-1){
                 if(currentClues[currentClueIndex]!=clueCounter){
-                   
                     if(currentClues[currentClueIndex]<clueCounter){
-                       
-                        
                     }
-                   
                     win=false;
                 }
                 
@@ -903,16 +895,23 @@ function winState(){
             }   
         }
         if(currentClueIndex!=currentClues.length){
-           
             win=false;
         }
 
     }
     if(win==true){
-    displayWinMessage()
-    watch.end();
+        if(attack==true){
+            gameCompleted++;
+            document.getElementById('gamesCompletedCounter').innerHTML=gameCompleted;
+            clearCurrentGame();
+            randomButton();
+        }
+        else{
+            displayWinMessage()
+            watch.end();
+        }
+    
     }
- 
 }
 function checkErrorHelperRow(clues,clueIndex,clueRanges,nextAvailableIndex,rowIndex,selectedSlotCnt,selectedCntCounter){
 
@@ -962,7 +961,7 @@ function checkErrorHelperRow(clues,clueIndex,clueRanges,nextAvailableIndex,rowIn
         return true;
     }
  }
- function checkErrorHelperColumn(clues,clueIndex,clueRanges,nextAvailableIndex,columnIndex,selectedSlotCnt,selectedCntCounter){
+function checkErrorHelperColumn(clues,clueIndex,clueRanges,nextAvailableIndex,columnIndex,selectedSlotCnt,selectedCntCounter){
 
     if(clueIndex>clues.length-1&&selectedCntCounter==0){
         return true;
@@ -1009,7 +1008,7 @@ function checkErrorHelperRow(clues,clueIndex,clueRanges,nextAvailableIndex,rowIn
     else {
         return true;
     }
- }
+    }
 function checkError(clueCorr){
     let corr=clueCorr.split(',');
     let r=parseInt(corr[0]);
@@ -1026,7 +1025,6 @@ function checkError(clueCorr){
         rowsClues=gameClues[0];
         columnsClues=gameClues[1];
     }
-  
     let selectedRow=rowsClues[r];
     let selectedColumn=columnsClues[c]; 
     
@@ -1124,9 +1122,9 @@ function checkError(clueCorr){
             document.getElementById('c:'+i+c).style.backgroundColor='initial';
         }
     }
-
 }
 function displayWinMessage(){
+
     let displayMessage=document.createElement('div');
     let dltBtn=document.createElement('button');
     displayMessage.appendChild(dltBtn);
@@ -1143,9 +1141,11 @@ function displayWinMessage(){
     document.getElementById('container').appendChild(displayMessage);
 
 }
+/*()
 function checkObj(){
     for (var prop in gameState) {
-       console.log(prop);
-       console.log(gameState[prop]);
-    }
+        console.log(prop);
+        console.log(gameState[prop]);
+        }
 }
+*/

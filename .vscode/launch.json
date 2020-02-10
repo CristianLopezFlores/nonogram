@@ -5,10 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
+            "type": "chrome",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/nonogram.js"
-        }
+            "name": "Launch Chrome",
+            "url": "http://localhost/nonogram/nonogram.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
     ]
 }
