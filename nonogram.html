@@ -54,6 +54,9 @@
                 <div id=moveCounterCtn>
                     move counter<p id='moveCounter'>0</p>
                 </div>
+                <div id=errorCounterCtn>
+                    errors <p id='errorCounter'>0</p>
+                </div>
                 <div id='changeColors'>
                     <h3>Change border color:</h3>
                     <br>
@@ -89,14 +92,23 @@
                 
                 </div>
         </div>
-        <div id='menu'>
-                <button class='menuButton' id='5X5'>5X5</button>
-                <button class='menuButton' id='10X5'>10X5</button>
-                <button class='menuButton' id='10X10'>10x10</button>
-                <button class='menuButton' id='15X15'>15x15</button>
-                <button class='menuButton' id='20X20'>20x20</button>
+        <div id='menu' style='display: none;'>
+                <button class='menuButton' id='5X5' onclick="fiveByFive()">5X5</button>
+                <button class='menuButton' id='10X5' onclick="tenByFive()">10X5</button>
+                <button class='menuButton' id='10X10' onclick="tenByTen()">10x10</button>
+                <button class='menuButton' id='15X15' onclick="fifteenByFifteen()">15x15</button>
+                <button class='menuButton' id='20X20' onclick="tenByTen()">20x20</button>
+                <p>you can create you own nonogram game with an uploaded image</p>
+                <button class='menuButton' id='uploadImage'>upload image</button>
                 
         
+        </div>
+        <div id='uploadImageCtn'>
+                <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
+                <p><label for="file" style="cursor: pointer;">Upload Image</label></p>  
+                <button class='menuButton' id='playGame'>PlayGame</button> 
+        
+                <div id='multiCanvas'> </div>
         </div>
         <div id=gameLevels>
             <button class='levels' id='level1'>level 1</button>
@@ -104,7 +116,28 @@
             <button class='levels' id='level3'>level 3</button>
             <button class='levels' id='level4'>level 4</button>
             <button class='levels' id='level5'>level 5</button>
-        </div>       
+            <button class='levels' id='randomButton' onclick=" randomButton()">Create Random Level</button>
+        </div>  
+        <div id='attackMenu' style='display: none;'>
+            <button class='menuButton' id='attack1' onclick="fiveByFive()">5X5</button>
+            <button class='menuButton' id='attack2' onclick="tenByFive()">10X5</button>
+            <button class='menuButton' id='attack3' onclick="tenByTen()">10x10</button>
+            <button class='menuButton' id='attack4' onclick="fifteenByFifteen()">15x15</button>
+            <button class='menuButton' id='attack5' onclick="tenByTen()">20x20</button>
+
+        </div>  
+        <div id='attackLevels' style='display: none;'>
+            <button class='menuButton' id='time1' onclick="threeMin()">3:00</button>
+            <button class='menuButton' id='time2' onclick="fiveMin()">5:00</button>
+            <button class='menuButton' id='time3' onclick="tenMin()">10:00</button>
+            <button class='menuButton' id='time4' onclick="fifteenMin()">15:00</button>
+            <button class='menuButton' id='time5' onclick="twentyMin()">20:00</button>
+
+        </div>  
+        <div id='gameTypeMenu'>
+            <button class='gameType' id='arcade'>arcade</button>
+            <button class='gameType' id='attack'>attack</button>
+        </div>      
     </div>
     
     <script src="nonogram.js"></script>

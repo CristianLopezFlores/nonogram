@@ -54,7 +54,7 @@ h1,button{
     box-shadow: 0px 0px  15px rgb(184, 107, 255); 
 }
 
-#menu{
+#menu,#attackMenu{
     
     width:fit-content;
     
@@ -66,7 +66,7 @@ h1,button{
     width: 100px;
     margin: 20px 0;
 }
-#gameLevels{
+#gameLevels,#attackLevels{
     display: none;
     width:fit-content;
     margin: 100px auto;
@@ -151,4 +151,7 @@ div{
   top: 50%;
   transform: translate(-50%, -50%);
 
+}
+#uploadImageCtn{
+    display: none;
 }
